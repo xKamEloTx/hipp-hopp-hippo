@@ -5,45 +5,81 @@
   <title>HIPP HOPP HIPPO 🎲</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #f0f8ff;
+      text-align: center;
       padding: 20px;
     }
+
     h1 {
-      color: #333;
+      font-size: 64px;
+      margin-bottom: 10px;
+      color: #222;
     }
+
+    .controls {
+      margin-bottom: 30px;
+    }
+
+    .player-input {
+      margin: 5px 0;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 240px;
+      max-width: 80%;
+    }
+
+    button.btn {
+      font-size: 24px;
+      padding: 14px 28px;
+      margin: 12px;
+      border: none;
+      border-radius: 12px;
+      background-color: #0077cc;
+      color: white;
+      cursor: pointer;
+    }
+
+    button.btn:hover:not(:disabled) {
+      background-color: #005fa3;
+    }
+
+    button.btn:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
     .dice-container {
       display: flex;
       justify-content: center;
       gap: 40px;
-      margin-top: 30px;
       flex-wrap: wrap;
+      margin: 30px 0;
     }
+
     .die {
       width: 360px;
       height: 360px;
       border-radius: 40px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.15);
       overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      perspective: 600px;
-      user-select: none;
       background-color: #444;
       color: white;
-      font-weight: 700;
       font-size: 144px;
-      margin-bottom: 20px;
+      cursor: pointer;
     }
-    /* Контейнер для анимации "перелистывания" */
+
     .face-container {
       height: 360px;
       width: 100%;
       overflow: hidden;
       position: relative;
     }
-    /* Все "листы" лиц */
+
     .faces {
       position: absolute;
       top: 0;
@@ -51,175 +87,230 @@
       width: 100%;
       transition: transform 0.6s ease-in-out;
     }
+
     .face {
       height: 360px;
       display: flex;
       justify-content: center;
       align-items: center;
-      user-select: none;
+      font-size: 192px;
       border-radius: 40px;
     }
-    /* Числовой кубик */
+
     .number-die .face {
       background-color: #444;
       color: white;
-      font-size: 192px;
-      font-weight: 800;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
     }
-    /* Цветной кубик */
-    .color-die .face {
-      font-size: 192px;
-      font-weight: 900;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
-    }
-    /* Цветной кубик обычный цветной квадрат */
-    .color-square {
+
+    .color-die .face .color-square {
       width: 100%;
       height: 100%;
       border-radius: 40px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
     }
 
-    button.btn {
-      margin-top: 30px;
-      padding: 14px 28px;
-      font-size: 20px;
-      border: none;
-      background-color: #0077cc;
-      color: white;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    button.btn:hover:not(:disabled) {
-      background-color: #005fa3;
-    }
-    button.btn:disabled {
-      background-color: #999;
-      cursor: default;
-    }
-    .result {
-      margin-top: 30px;
-      font-size: 24px;
-      min-height: 40px;
+    .player-turn {
+      font-size: 36px;
+      margin-top: 20px;
       color: #222;
+      font-weight: bold;
+    }
+
+    .history {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 20px;
+    }
+
+    .history-entry {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      width: 100%;
+      max-width: 600px;
+      justify-content: center;
+    }
+
+    .mini-die {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      font-size: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mini-color {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.4);
     }
   </style>
 </head>
 <body>
-  <h1>🎲 HIPP HOPP HIPPO 🎲</h1>
-  <p>Нажми кнопку, чтобы бросить два кубика с анимацией!</p>
-  <button class="btn" id="rollBtn">Бросить кубики</button>
 
-  <div class="dice-container" style="margin-top:40px;">
-    <div class="die number-die" aria-label="Числовой кубик" role="img">
+  <h1>🎲 HIPP HOPP HIPPO 🎲</h1>
+
+  <div class="controls" id="playerSetup">
+    <div class="player-input"><input type="text" placeholder="Игрок 1" id="player1" /></div>
+    <div class="player-input"><input type="text" placeholder="Игрок 2" id="player2" /></div>
+    <div class="player-input"><input type="text" placeholder="Игрок 3 (необязательно)" id="player3" /></div>
+    <div class="player-input"><input type="text" placeholder="Игрок 4 (необязательно)" id="player4" /></div>
+    <button class="btn" id="startGame" disabled>Начать игру</button>
+  </div>
+
+  <div class="player-turn" id="turnInfo" style="display:none;"></div>
+
+  <div class="dice-container" style="display:none;" id="diceArea">
+    <div class="die number-die" id="numberDie">
       <div class="face-container">
         <div class="faces" id="numberFaces">
-          <!-- Лица числового кубика: 2, 3, 4 (повторяем чтобы анимация листала) -->
-          <div class="face">2</div>
-          <div class="face">3</div>
-          <div class="face">4</div>
-          <div class="face">2</div>
-          <div class="face">3</div>
-          <div class="face">4</div>
+          <div class="face">2</div><div class="face">3</div><div class="face">4</div>
+          <div class="face">2</div><div class="face">3</div><div class="face">4</div>
         </div>
       </div>
     </div>
-    <div class="die color-die" aria-label="Цветной кубик" role="img">
+    <div class="die color-die" id="colorDie">
       <div class="face-container">
         <div class="faces" id="colorFaces">
-          <!-- Лица цветного кубика: цвета + бегемот -->
           <div class="face"><div class="color-square" style="background-color: gold;"></div></div>
           <div class="face"><div class="color-square" style="background-color: dodgerblue;"></div></div>
           <div class="face"><div class="color-square" style="background-color: purple;"></div></div>
           <div class="face"><div class="color-square" style="background-color: green;"></div></div>
           <div class="face"><div class="color-square" style="background-color: crimson;"></div></div>
-          <div class="face" style="font-size: 192px; color: #333; background: white; display: flex; justify-content: center; align-items: center; border-radius: 40px;">🦛</div>
+          <div class="face" style="background: white;">🦛</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="result" id="resultText"></div>
+  <div class="history" id="history"></div>
 
-  <!-- Звук броска -->
-  <audio id="rollSound" src="https://freesound.org/data/previews/66/66717_931655-lq.mp3"></audio>
+  <audio id="rollSound" src="https://freesound.org/data/previews/607/607425_12595672-lq.mp3"></audio>
 
   <script>
-    const numberDieValues = [2, 3, 4];
+    const faceHeight = 360;
+    const numberDieFaces = [2, 3, 4, 2, 3, 4];
+    const numberOptions = [2, 2, 2, 3, 3, 4];
 
     const colorDieValues = [
-      { color: "gold", label: "Жёлтый" },
-      { color: "dodgerblue", label: "Синий" },
-      { color: "purple", label: "Фиолетовый" },
-      { color: "green", label: "Зелёный" },
-      { color: "crimson", label: "Красный" },
-      { color: "white", label: "Бегемот", isHippo: true }
+      { label: "Жёлтый", css: "gold" },
+      { label: "Синий", css: "dodgerblue" },
+      { label: "Фиолетовый", css: "purple" },
+      { label: "Зелёный", css: "green" },
+      { label: "Красный", css: "crimson" },
+      { label: "Бегемот", css: "white", isHippo: true }
     ];
 
     const numberFaces = document.getElementById('numberFaces');
     const colorFaces = document.getElementById('colorFaces');
-    const resultText = document.getElementById('resultText');
-    const rollBtn = document.getElementById('rollBtn');
+    const turnInfo = document.getElementById('turnInfo');
+    const historyDiv = document.getElementById('history');
     const rollSound = document.getElementById('rollSound');
 
-    const faceHeight = 360; // увеличена высота
+    const inputs = [player1, player2, player3, player4];
+    const startBtn = document.getElementById('startGame');
+    let players = [];
+    let currentPlayer = 0;
+    let rolling = false;
+
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const filled = inputs.filter(i => i.value.trim()).length;
+        startBtn.disabled = filled < 2;
+      });
+    });
+
+    startBtn.addEventListener('click', () => {
+      players = inputs.map(i => i.value.trim()).filter(name => name.length > 0);
+      currentPlayer = 0;
+      document.getElementById('playerSetup').style.display = 'none';
+      document.getElementById('diceArea').style.display = 'flex';
+      turnInfo.style.display = 'block';
+      updateTurnInfo();
+    });
+
+    function updateTurnInfo() {
+      turnInfo.textContent = `Ходит: ${players[currentPlayer]}`;
+    }
+
+    document.getElementById('numberDie').addEventListener('click', rollDice);
+    document.getElementById('colorDie').addEventListener('click', rollDice);
 
     function rollDice() {
-      rollBtn.disabled = true;
-      resultText.textContent = '';
-
+      if (rolling) return;
+      rolling = true;
       rollSound.currentTime = 0;
       rollSound.play();
 
-      let frames = 30;
-      let currentFrame = 0;
+      let frames = 30, step = 0;
+      const interval = setInterval(() => {
+    step++;
+    numberFaces.style.transform = `translateY(-${Math.floor(Math.random() * 6) * faceHeight}px)`;
+    colorFaces.style.transform = `translateY(-${Math.floor(Math.random() * 6) * faceHeight}px)`;
+    if (step >= frames) {
+      clearInterval(interval);
+      showResult();
+    }
+  }, 30);
+}
 
-      const animationInterval = setInterval(() => {
-        currentFrame++;
+function showResult() {
+  const number = numberOptions[Math.floor(Math.random() * numberOptions.length)];
+  const colorObj = colorDieValues[Math.floor(Math.random() * colorDieValues.length)];
 
-        const numIndex = Math.floor(Math.random() * 6);
-        const colIndex = Math.floor(Math.random() * 6);
+  const numberIndex = numberDieFaces.indexOf(number);
+  const colorIndex = colorDieValues.indexOf(colorObj);
 
-        numberFaces.style.transform = `translateY(-${numIndex * faceHeight}px)`;
-        colorFaces.style.transform = `translateY(-${colIndex * faceHeight}px)`;
+  numberFaces.style.transition = 'transform 0.6s ease-in-out';
+  colorFaces.style.transition = 'transform 0.6s ease-in-out';
+  numberFaces.style.transform = `translateY(-${numberIndex * faceHeight}px)`;
+  colorFaces.style.transform = `translateY(-${colorIndex * faceHeight}px)`;
 
-        if (currentFrame >= frames) {
-          clearInterval(animationInterval);
-          showResult();
-        }
-      }, 33);
+  setTimeout(() => {
+    const entry = document.createElement('div');
+    entry.className = 'history-entry';
+
+    const numDie = document.createElement('div');
+    numDie.className = 'mini-die';
+    numDie.style.background = '#333';
+    numDie.style.color = '#fff';
+    numDie.textContent = number;
+
+    const colorDie = document.createElement('div');
+    colorDie.className = colorObj.isHippo ? 'mini-die' : 'mini-color';
+    if (colorObj.isHippo) {
+      colorDie.style.background = '#fff';
+      colorDie.style.color = '#000';
+      colorDie.textContent = '🦛';
+    } else {
+      colorDie.style.background = colorObj.css;
+      colorDie.textContent = '';
     }
 
-    function showResult() {
-      const originalNumberDie = [2, 2, 2, 3, 3, 4];
-      const finalNumber = originalNumberDie[Math.floor(Math.random() * originalNumberDie.length)];
+    const name = document.createElement('div');
+    name.textContent = `${players[currentPlayer]}:`;
 
-      const numberFacesValues = [2,3,4,2,3,4];
-      let numberIndex = numberFacesValues.indexOf(finalNumber);
+    entry.append(name, numDie, colorDie);
 
-      const finalColor = colorDieValues[Math.floor(Math.random() * colorDieValues.length)];
-      const colorIndex = colorDieValues.indexOf(finalColor);
+    // Добавляем новую запись в начало
+    historyDiv.prepend(entry);
 
-      numberFaces.style.transition = 'transform 0.6s ease-in-out';
-      colorFaces.style.transition = 'transform 0.6s ease-in-out';
-
-      numberFaces.style.transform = `translateY(-${numberIndex * faceHeight}px)`;
-      colorFaces.style.transform = `translateY(-${colorIndex * faceHeight}px)`;
-
-      setTimeout(() => {
-        resultText.textContent = '';
-        if (finalColor.isHippo) {
-          resultText.innerHTML = "🦛 Выпал <b>Бегемот</b>! Случайное событие!";
-        } else {
-          resultText.textContent = `Выпал цвет и число: ${finalNumber}`;
-        }
-        rollBtn.disabled = false;
-      }, 700);
+    // Ограничиваем количество записей в истории до 10
+    while (historyDiv.children.length > 10) {
+      historyDiv.removeChild(historyDiv.lastChild);
     }
 
-    rollBtn.addEventListener('click', rollDice);
+    currentPlayer = (currentPlayer + 1) % players.length;
+    updateTurnInfo();
+    rolling = false;
+  }, 600);
+}
   </script>
 </body>
 </html>
